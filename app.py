@@ -4,3 +4,6 @@ MONGO_URI = 'mongodb://localhost' #en caso de cambiar esto tendriamos que poner 
 
 client = MongoClient(MONGO_URI) #client es el cursor o la conexion con la base de datos
 
+db = client.tienda
+
+print(db.Productos.find())
