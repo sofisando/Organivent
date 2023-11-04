@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+</head>
+
+<body>
+    <h1>Lista de Productos</h1>
+    <ul>
+        {% for producto in Productos %}
+            <li>
+                <strong>{{ producto.nombre }}</strong><br>
+                Descripción: {{ producto.descripcion }}<br>
+                Precio: {{ producto.precio }}<br>
+                <!-- Categoría: {{ Producto.categoria }}<br> -->
+                <!-- Agrega más detalles según la estructura de tus documentos -->
+            </li>
+            <br>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

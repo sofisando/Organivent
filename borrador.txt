@@ -1,0 +1,41 @@
+def obtener_documentos():
+    # Accede a una colección en la base de datos
+    #collection = db["Cliente"]  # Reemplaza con el nombre de tu colección
+
+    # Recupera todos los documentos de la colección
+    #documentos = list(collection.find({}))
+
+    #return {"documentos": documentos}
+
+
+
+
+import pymongo
+from jinja2 import Environment, FileSystemLoader
+
+# Conecta a la base de datos MongoDB (como se mostró anteriormente)
+mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
+db = mongo_client["mi_base_de_datos"]
+
+# Configura Jinja2 para cargar las plantillas HTML desde un directorio
+template_env = Environment(loader=FileSystemLoader("templates"))
+
+def application(environ, start_response):
+    path = environ.get('PATH_INFO', '')
+    if path == '/':
+        # Accede a una colección en la base de datos
+        collection = db["mi_coleccion"]  # Reemplaza con el nombre de tu colección
+
+        # Recupera los datos de la colección (puedes personalizar esta parte según tus necesidades)
+        datos = list(collection.find({"nombre??"}))
+
+        # Renderiza una plantilla HTML con los datos
+        template = template_env.get_template("template.html")  # Reemplaza con el nombre de tu plantilla
+        rendered_template = template.render(datos=datos)
+
+        start_response('200 OK', [('Content-type', 'text/html')])
+        return [rendered_template.encode('utf-8')]
+    elif path.startswith('/static/'):
+        # Si se solicitan recursos estáticos, como CSS o JavaScript, sirve los archivos desde la carpeta "static"
+        static_path = path[1]
+
