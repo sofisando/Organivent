@@ -10,12 +10,12 @@
 <body>
     <h1>Lista de Productos</h1>
     <ul>
-        {% for producto in Productos %}
+        {% for producto in productos %}
             <li>
                 <strong>{{ producto.nombre }}</strong><br>
                 Descripción: {{ producto.descripcion }}<br>
                 Precio: {{ producto.precio }}<br>
-                <!-- Categoría: {{ Producto.categoria }}<br> -->
+                <!-- Categoría: {{ producto.categoria }}<br> -->
                 <!-- Agrega más detalles según la estructura de tus documentos -->
             </li>
             <br>
