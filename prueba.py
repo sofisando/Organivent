@@ -5,7 +5,7 @@ from jinja2 import Environment, FileSystemLoader
 # Conexión a la base de datos MongoDB
 MONGO_URI = 'mongodb://localhost'
 client = MongoClient(MONGO_URI)
-db = client.tienda
+db = client.tienda  #db Sofi tienda | Ro Tienda 
 
 # Configura Jinja2 para cargar las plantillas HTML desde un directorio
 template_env = Environment(loader=FileSystemLoader("templates"))
@@ -24,6 +24,15 @@ def productos(request, response):
 
     # Configura la respuesta HTTP
     response.text = rendered_template
+
+
+@app.ruta("/productos/alta")
+
+    #aca adentro deberian estar las funciones, 
+    #aca va el python 
+
+
+
 
 # Handler para la ruta "/producto/<id>"
 @app.ruta(r"/producto/(\w+)")
