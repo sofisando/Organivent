@@ -32,20 +32,32 @@ def productos(request, response):
     #aca va el python 
 
 
-
-
-# Handler para la ruta "/producto/<id>"
-@app.ruta(r"/producto/(\w+)")
+@app.ruta("/productos/atributos:{{producto.id}}")
 def producto_detalle(request, response, producto_id):
     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
     producto = db.productos.find_one({"_id": producto_id})
 
     # Renderiza el template con los detalles del producto
-    template = template_env.get_template("producto_detalle.html")
+    template = template_env.get_template("producto_atributos.html")
     rendered_template = template.render(producto=producto)
 
     # Configura la respuesta HTTP
     response.text = rendered_template
+
+
+
+# Handler para la ruta "/producto/<id>"
+# @app.ruta(r"/producto/(\w+)")
+# def producto_detalle(request, response, producto_id):
+#     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
+#     producto = db.productos.find_one({"_id": producto_id})
+
+#     # Renderiza el template con los detalles del producto
+#     template = template_env.get_template("producto_detalle.html")
+#     rendered_template = template.render(producto=producto)
+
+#     # Configura la respuesta HTTP
+#     response.text = rendered_template
 
 # Resto de tus handlers
 @app.ruta("/home")
