@@ -52,6 +52,8 @@
     <!-- nav bar buscador --------------------------------------------------------->
     
     <h1 style="text-align: center; margin: 30px;">Mostrar lista de Productos</h1>
+    <!-- boton para dar de alta -->
+    <a style="text-align: center" href="/productos/alta" class="btn btn-success">Nuevo producto</a>
 
     <!-- carta para poner los productos --------------------------------------------------------->
     {% for producto in productos %}
@@ -65,7 +67,7 @@
             <!-- Agrega más detalles según la estructura de tus documentos -->
         </div>
         
-        <a href="/productos/atributos:{{producto.id}}" class="btn btn-primary">Ver</a>
+        <a href="/productos/atributos/{{producto.id}}" class="btn btn-primary">Ver</a>
       </div>
     </div>
     <br>

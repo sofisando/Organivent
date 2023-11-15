@@ -3,6 +3,8 @@
 from apiwsgi import Wsgiclass
 from pymongo import MongoClient
 from jinja2 import Environment, FileSystemLoader
+import base64
+from waitress import serve
 
 #aca se conecta la base de datos por el momento
 
@@ -59,3 +61,32 @@ def home(request, response):
     # response.text = "<h3>Pagina Home</h3>"
     response.text = app.template(
     "viajes.html")
+
+@app.ruta("/cargar_imagen")
+def cargar_imagen(request, response):
+    if request.method == 'POST':
+        try:
+            # Obtener datos de la solicitud POST
+            name = request.form.get('name', '')
+            image_data = request.form.get('image', '')
+
+            # Decodificar la imagen Base64
+            decoded_image = base64.b64decode(image_data)
+
+            # Guardar la imagen en MongoDB
+            db.products.insert_one({
+                'name': name,
+                'image': decoded_image
+            })
+
+            response.json({"message": "Image uploaded successfully!"}, status_code=201)
+
+        except Exception as e:
+            print(e)
+            response.json({"message": "Error uploading image."}, status_code=500)
+    else:
+        response.json({"message": "Invalid request method."}, status_code=405)
+
+if __name__ == '__main__':
+    # Utiliza Waitress para servir la aplicación
+    serve(app, host='0.0.0.0', port=8000)    

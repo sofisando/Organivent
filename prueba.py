@@ -27,12 +27,32 @@ def productos(request, response):
 
 
 @app.ruta("/productos/alta")
+def alta_producto(request, response):
+    # Obtener parámetros desde la URL
+    nombre = request.params.get('nombre_producto', '')
+    descripcion = request.params.get('descripcion', '')
+    precio = request.params.get('precio', '')
+
+    # Crear el diccionario del producto
+    producto = {
+        "nombre_producto": nombre,
+        "descripcion": descripcion,
+        "precio": precio,
+    }
+
+    # Insertar el producto en la base de datos
+    db.Productos.insert_one(producto)
+    print("Producto creado con éxito!")
+
+    # Redirigir a la página de productos (o a donde desees)
+    response.redirect("/productos")
+
 
     #aca adentro deberian estar las funciones, 
     #aca va el python 
 
-
-@app.ruta("/productos/atributos:{{producto.id}}")
+#parametrizado de ruta
+@app.ruta("/productos/atributos/<producto_id>")
 def producto_detalle(request, response, producto_id):
     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
     producto = db.productos.find_one({"_id": producto_id})
@@ -47,17 +67,17 @@ def producto_detalle(request, response, producto_id):
 
 
 # Handler para la ruta "/producto/<id>"
-# @app.ruta(r"/producto/(\w+)")
-# def producto_detalle(request, response, producto_id):
-#     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
-#     producto = db.productos.find_one({"_id": producto_id})
+@app.ruta(r"/producto/(\w+)")
+def producto_detalle(request, response, producto_id):
+    # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
+    producto = db.productos.find_one({"_id": producto_id})
 
-#     # Renderiza el template con los detalles del producto
-#     template = template_env.get_template("producto_detalle.html")
-#     rendered_template = template.render(producto=producto)
+    # Renderiza el template con los detalles del producto
+    template = template_env.get_template("producto_detalle.html")
+    rendered_template = template.render(producto=producto)
 
-#     # Configura la respuesta HTTP
-#     response.text = rendered_template
+    # Configura la respuesta HTTP
+    response.text = rendered_template
 
 # Resto de tus handlers
 @app.ruta("/home")
