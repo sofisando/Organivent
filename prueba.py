@@ -1,6 +1,11 @@
 from apiwsgi import Wsgiclass
 from pymongo import MongoClient
+from bson import Binary
+from webob import Request
+from webob.exc import HTTPFound
+from waitress import serve
 from jinja2 import Environment, FileSystemLoader
+#from werkzeug.utils import secure_filename   libreria para manejar mas seguro los archivos
 
 # Conexión a la base de datos MongoDB
 MONGO_URI = 'mongodb://localhost'
@@ -25,37 +30,59 @@ def productos(request, response):
     # Configura la respuesta HTTP
     response.text = rendered_template
 
-
+    
 @app.ruta("/productos/alta")
 def alta_producto(request, response):
-    # Obtener parámetros desde la URL
-    nombre = request.params.get('nombre_producto', '')
-    descripcion = request.params.get('descripcion', '')
-    precio = request.params.get('precio', '')
+    if request.method == 'POST':
+        # Handle the image upload
+        uploaded_file = request.POST.get('imagen')
+        if uploaded_file is not None:
+            try:
+                image_content = uploaded_file.file.read()
+            except Exception as e:
+                print(f"Error reading image file: {e}")
+                # Handle the error appropriately, e.g., return an error page
+                return
 
-    # Crear el diccionario del producto
-    producto = {
-        "nombre_producto": nombre,
-        "descripcion": descripcion,
-        "precio": precio,
-    }
+            # Store the image content in MongoDB
+            producto = {
+                "nombre_producto": request.POST.get('nombre_producto', ''),
+                "descripcion": request.POST.get('descripcion', ''),
+                "precio_venta": request.POST.get('precio', ''),
+                "imagen": Binary(image_content)
+            }
 
-    # Insertar el producto en la base de datos
-    db.Productos.insert_one(producto)
-    print("Producto creado con éxito!")
+            # Use the correct collection name
+            try:
+                db.Productos.insert_one(producto)
+                print("Producto con imagen creado con éxito!")
+            except Exception as e:
+                print(f"Error inserting product into the database: {e}")
+                # Handle the error appropriately, e.g., return an error page
+                return
 
-    # Redirigir a la página de productos (o a donde desees)
-    response.redirect("/productos")
+            # Redirect to the product page or wherever you want
+            # response.redirect("/Productos")
+            response = HTTPFound(location="/Productos")
+            return
 
+    # If not a POST request or no file uploaded, render the form
+    response.text = """
+    <form method="post" enctype="multipart/form-data">
+        Nombre del Producto: <input type="text" name="nombre_producto" required><br>
+        Descripción: <input type="text" name="descripcion" required><br>
+        Precio: <input type="number" name="precio" required><br>
+        Imagen: <input type="file" name="imagen" accept="image/*" required><br>
+        <input type="submit" value="Alta de Producto">
+    </form>
+    """
 
-    #aca adentro deberian estar las funciones, 
-    #aca va el python 
 
 #parametrizado de ruta
 @app.ruta("/productos/atributos/<producto_id>")
 def producto_detalle(request, response, producto_id):
     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
-    producto = db.productos.find_one({"_id": producto_id})
+    producto = db.Productos.find_one({"_id": producto_id})
 
     # Renderiza el template con los detalles del producto
     template = template_env.get_template("producto_atributos.html")
@@ -70,7 +97,7 @@ def producto_detalle(request, response, producto_id):
 @app.ruta(r"/producto/(\w+)")
 def producto_detalle(request, response, producto_id):
     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
-    producto = db.productos.find_one({"_id": producto_id})
+    producto = db.Productos.find_one({"_id": producto_id})
 
     # Renderiza el template con los detalles del producto
     template = template_env.get_template("producto_detalle.html")

@@ -3,7 +3,9 @@
 from apiwsgi import Wsgiclass
 from pymongo import MongoClient
 from jinja2 import Environment, FileSystemLoader
-import base64
+from bson import Binary
+import os
+#import base64 #ver si lo usamos o sacar (imagenes)
 from waitress import serve
 
 #aca se conecta la base de datos por el momento
@@ -32,8 +34,56 @@ def otra(request, response):
 @app.ruta("/ultima")
 def ultima(request, response):
     response.text = "Ultima Pagina"
+    response.image = open('g2.jpg', 'rb').read()
 
 @app.ruta("/obtener_documentos")
+#def ultima(request, response):
+#    response.text = "Ultima Pagina"
+#    image_path = '/static/imagenes/2.jpg'
+#    image_content = db['your_images_collection'].find_one({'path': image_path})['content']
+#    response.content_type = 'image/jpeg'
+#    response.body = image_content
+
+#def ultima(request, response):
+#    response.text = "Ultima Pagina"
+#    image_path = '/static/imagenes/2.jpg'
+#    
+#    # Read the image file as binary data
+#    image_file_path = os.path.join(os.getcwd(), 'static', 'imagenes', '2.jpg')
+#
+#    with open(image_file_path, 'rb') as image_file:
+#    #with open('path/to/your/images' + image_path, 'rb') as image_file:
+#
+    # Store the image content in MongoDB
+#    db['your_images_collection'].insert_one({'path': image_path, 'content': Binary(image_content)})
+#
+#    # Set the image content in the response
+#    response.content_type = 'image/jpeg'
+#    response.body = image_content
+
+def ultima(request, response):
+    if request.method == 'POST':
+        # Handle the image upload / Carga de imagen
+        uploaded_file = request.files.get('imagen')
+        if uploaded_file:
+            image_content = uploaded_file.file.read()
+
+            # Store the image content in MongoDB
+            db['Productos'].insert_one({'imagen': Binary(image_content)})
+
+            # Set the image content in the response
+            response.content_type = 'image/jpeg'
+            response.body = image_content
+            return
+
+    # If not a POST request or no file uploaded, render a form
+    # Si no es una solicitud POST o no se ha subido ningún archivo, renderice un formulario
+    response.text = """
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="imagen" accept="image/*">
+        <input type="submit" value="Subir Imagen">
+    </form>
+    """
 
 def application(environ, start_response):
     path = environ.get('PATH_INFO', '')

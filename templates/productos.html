@@ -58,17 +58,16 @@
     <!-- carta para poner los productos --------------------------------------------------------->
     {% for producto in productos %}
     <div class="card" style="width: 18rem; max-width: 800px; margin: 0 auto;">
-      <img src="C:\Users\Sofi\Desktop\Programacion ll\tienda\static\imagenes\2.jpg" class="card-img-top" alt="Foto producto">
+      <img src="data:image/jpeg;base64,{{ producto.imagen }}" class="card-img-top" alt="Foto producto">
       <div class="card-body">
         <h5 class="card-title"><strong>{{ producto.nombre_producto }}</strong></h5>
-            Descripción: {{ producto.descripcion }}<br>
-            Precio: {{ producto.precio }}<br>
-            <!-- Categoría: {{ producto.categoria }}<br> -->
-            <!-- Agrega más detalles según la estructura de tus documentos -->
-        </div>
-        
-        <a href="/productos/atributos/{{producto.id}}" class="btn btn-primary">Ver</a>
+        Descripción: {{ producto.descripcion }}<br>
+        Precio: {{ producto.precio }}<br>
+        <!-- Categoría: {{ producto.categoria }}<br> -->
+        <!-- Agrega más detalles según la estructura de tus documentos -->
       </div>
+      
+      <a href="/productos/atributos/{{producto.id}}" class="btn btn-primary">Ver</a>
     </div>
     <br>
     {% endfor %}

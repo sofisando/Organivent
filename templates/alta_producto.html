@@ -1,3 +1,5 @@
+<!-- ESTE QUEDO INSERVIBLE PORQUE LO TERMINAMOS PONIENDO EN EL MISMO RUTEADOR AL HTML -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,12 +14,20 @@
     
     <h1 style="text-align: center; margin: 30px;">Nuevo producto</h1>
 
-    <form method="get" action="prueba.py">
+    <!-- <form method="post" action="/productos/alta">
         Nombre del producto: <input name="nombre_producto" type="text" /><br />
         Descripción: <input name="descripcion" type="text" /><br />
         Precio:  <input name="precio" type="number" /><br />
 
         <button type="submit">Crear</button>
+    </form> -->
+
+    <form method="post" enctype="multipart/form-data" action="/productos/alta">
+        Nombre del Producto: <input type="text" name="nombre_producto" required><br>
+        Descripción: <input type="text" name="descripcion" required><br>
+        Precio: <input type="number" name="precio" required><br>
+        Imagen: <input type="file" name="imagen" accept="image/*" required><br>
+        <input type="submit" value="Alta de Producto">
     </form>
 
 
