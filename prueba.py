@@ -5,23 +5,31 @@ from webob import Request
 from webob.exc import HTTPFound
 from waitress import serve
 from jinja2 import Environment, FileSystemLoader
-#from werkzeug.utils import secure_filename   libreria para manejar mas seguro los archivos
+import base64
 
 # Conexión a la base de datos MongoDB
 MONGO_URI = 'mongodb://localhost'
 client = MongoClient(MONGO_URI)
-db = client.tienda  #db Sofi tienda | Ro Tienda 
+db = client.Tienda
 
 # Configura Jinja2 para cargar las plantillas HTML desde un directorio
 template_env = Environment(loader=FileSystemLoader("templates"))
 
 app = Wsgiclass()
 
-# Handler para la ruta "/productos"
 @app.ruta("/productos")
-def productos(request, response):
+def productosss(request, response):  # Renamed the handler to avoid conflict
     # Realiza una consulta a la base de datos
-    productos = db.Productos.find()
+    productos_cursor = db.Productos_prueba.find()
+
+    # Convert the cursor to a list
+    productos = list(productos_cursor)
+
+    # Encode image data to base64
+    for producto in productos:
+        if 'imagen' in producto and producto['imagen']:
+            producto['imagen'] = base64.b64encode(producto['imagen']).decode('utf-8')
+
 
     # Renderiza el template con los datos de la base de datos
     template = template_env.get_template("productos.html")
@@ -31,6 +39,7 @@ def productos(request, response):
     response.text = rendered_template
 
     
+# Handler para la ruta "/productos/alta"
 @app.ruta("/productos/alta")
 def alta_producto(request, response):
     if request.method == 'POST':
@@ -54,7 +63,7 @@ def alta_producto(request, response):
 
             # Use the correct collection name
             try:
-                db.Productos.insert_one(producto)
+                db.Productos_prueba.insert_one(producto)
                 print("Producto con imagen creado con éxito!")
             except Exception as e:
                 print(f"Error inserting product into the database: {e}")
@@ -78,11 +87,11 @@ def alta_producto(request, response):
     """
 
 
-#parametrizado de ruta
+# Handler para la ruta "/productos/atributos/<producto_id>"
 @app.ruta("/productos/atributos/<producto_id>")
-def producto_detalle(request, response, producto_id):
+def producto_atributos(request, response, producto_id):
     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
-    producto = db.Productos.find_one({"_id": producto_id})
+    producto = db.Productos_prueba.find_one({"_id": producto_id})
 
     # Renderiza el template con los detalles del producto
     template = template_env.get_template("producto_atributos.html")
@@ -92,12 +101,11 @@ def producto_detalle(request, response, producto_id):
     response.text = rendered_template
 
 
-
 # Handler para la ruta "/producto/<id>"
 @app.ruta(r"/producto/(\w+)")
 def producto_detalle(request, response, producto_id):
     # Realiza una consulta a la base de datos para obtener los detalles del producto por su ID
-    producto = db.Productos.find_one({"_id": producto_id})
+    producto = db.Productos_prueba.find_one({"_id": producto_id})
 
     # Renderiza el template con los detalles del producto
     template = template_env.get_template("producto_detalle.html")
@@ -105,6 +113,7 @@ def producto_detalle(request, response, producto_id):
 
     # Configura la respuesta HTTP
     response.text = rendered_template
+
 
 # Resto de tus handlers
 @app.ruta("/home")
@@ -120,3 +129,8 @@ def otra(request, response):
 @app.ruta("/ultima")
 def ultima(request, response):
     response.text = "Ultima Pagina"
+
+
+if __name__ == "__main__":
+    # Se inicia el servidor en el puerto 8000
+    serve(app, host='0.0.0.0', port=8000)

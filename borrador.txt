@@ -1,71 +1,51 @@
-def obtener_documentos():
-    # Accede a una colección en la base de datos
-    #collection = db["Cliente"]  # Reemplaza con el nombre de tu colección
+from pymongo import MongoClient
+from bson import ObjectId
+from datetime import datetime
 
-    # Recupera todos los documentos de la colección
-    #documentos = list(collection.find({}))
+# Conéctate a la base de datos MongoDB
+client = MongoClient('@localhost:27017/mongodb://localhost:27017')
+db = client.Tienda  # Reemplaza "tu_base_de_datos" con el nombre de tu base de datos
 
-    #return {"documentos": documentos}
+# Función para crear un nuevo pedido
+def crear_pedido(usuario_id, productos, metodo_pago):
+    pedido = {
+        "usuario": usuario_id,
+        "productos": productos,
+        "estado": "Pendiente",
+        "metodo_pago": metodo_pago,
+        "fecha": datetime.now()
+    }
+    db.pedidos.insert_one(pedido)
+    print("Pedido creado con éxito!")
 
+# Función para obtener y mostrar información de un pedido
+def mostrar_pedido(pedido_id):
+    pedido = db.pedidos.find_one({"_id": ObjectId(pedido_id)})
+    if pedido:
+        print("Información del Pedido:")
+        print(f"ID del Pedido: {pedido['_id']}")
+        print(f"Usuario: {pedido['usuario']}")
+        print(f"Productos: {pedido['productos']}")
+        print(f"Estado: {pedido['estado']}")
+        print(f"Método de Pago: {pedido['metodo_pago']}")
+        print(f"Fecha: {pedido['fecha']}")
+    else:
+        print("Pedido no encontrado.")
 
+# Ejemplo de uso
+if __name__ == "__main__":
+    # Crea un nuevo pedido
+    usuario_id = "ID del Usuario"  # Reemplaza con el ID del usuario que hace el pedido
+    productos = [
+        {"producto_id": "product_id_1", "cantidad": 2},
+        {"producto_id": "product_id_2", "cantidad": 1}
+    ]
+    metodo_pago = {
+        "tipo": "Tarjeta de Crédito",
+        "id_metodo_pago": "ID de la Tarjeta de Crédito del Usuario"
+    }
+    crear_pedido(usuario_id, productos, metodo_pago)
 
-
-import pymongo
-from jinja2 import Environment, FileSystemLoader
-
-# Conecta a la base de datos MongoDB (como se mostró anteriormente)
-mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = mongo_client["mi_base_de_datos"]
-
-# Configura Jinja2 para cargar las plantillas HTML desde un directorio
-template_env = Environment(loader=FileSystemLoader("templates"))
-
-def application(environ, start_response):
-    path = environ.get('PATH_INFO', '')
-    if path == '/':
-        # Accede a una colección en la base de datos
-        collection = db["mi_coleccion"]  # Reemplaza con el nombre de tu colección
-
-        # Recupera los datos de la colección (puedes personalizar esta parte según tus necesidades)
-        datos = list(collection.find({"nombre??"}))
-
-        # Renderiza una plantilla HTML con los datos
-        template = template_env.get_template("template.html")  # Reemplaza con el nombre de tu plantilla
-        rendered_template = template.render(datos=datos)
-
-        start_response('200 OK', [('Content-type', 'text/html')])
-        return [rendered_template.encode('utf-8')]
-    elif path.startswith('/static/'):
-        # Si se solicitan recursos estáticos, como CSS o JavaScript, sirve los archivos desde la carpeta "static"
-        static_path = path[1]
-
-
-
-
-______________________________________________________________________________________________________
-import requests
-import base64
-
-# URL del servidor
-server_url = 'http://localhost:8000'
-
-# Nombre y ruta de la imagen que deseas cargar
-image_path = '/path/to/your/image.jpg'
-
-# Lee la imagen en formato binario
-with open(image_path, 'rb') as image_file:
-    # Codifica la imagen en base64
-    encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-
-# Parámetros del formulario
-form_data = {
-    'name': 'Product Name',
-    'image': encoded_image
-}
-
-# Realiza la solicitud POST al servidor
-response = requests.post(server_url, data=form_data)
-
-# Imprime la respuesta del servidor
-print(response.text)
-_____________________________________________________________________________________________-
+    # Muestra información del pedido
+    pedido_id = "ID del Pedido Creado"  # Reemplaza con el ID del pedido que quieres mostrar
+    mostrar_pedido(pedido_id)

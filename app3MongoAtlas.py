@@ -1,5 +1,6 @@
 
 #Acá intentamos conectar con Mongo Atlas
+#no se pudo
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
