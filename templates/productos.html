@@ -30,7 +30,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Cuadernos y papelería</a></li>
-                            <!-- PODRIAMOS PONER TODO LOS PRODUCTOS, Y CON LA CATEGORIA REDIRIJIMOS A LA MISMA PAGINA EN DONDE SALEN ESA SECCION ALMOHADILLA SOFI -->
+                            <!-- Puedes personalizar estas opciones según tu aplicación -->
                             <li><a class="dropdown-item" href="#">Útiles</a></li>
                             <li><a class="dropdown-item" href="#">Arte y Pintura</a></li>
                             <li><hr class="dropdown-divider"></li>
@@ -44,7 +44,7 @@
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Buscar</button>
-                    <!-- PONER ESO DEL BUSCADOR QUE VIMOS donde "nombre_producto"=talproducto* aterisco para que busque lo que comience con eso -->
+                    <!-- Puedes ajustar esto según el buscador que desees implementar -->
                 </form>
             </div>
         </div>
@@ -52,32 +52,35 @@
     <!-- nav bar buscador --------------------------------------------------------->
 
     <h1 style="text-align: center; margin: 30px;">Mostrar lista de Productos</h1>
-    <!-- boton para dar de alta -->
+    <!-- Botón para dar de alta un nuevo producto -->
     <a style="text-align: center" href="/productos/alta" class="btn btn-success">Nuevo producto</a>
 
-    <!-- carta para poner los productos --------------------------------------------------------->
-    {% for producto in productos %}
-    <div class="card" style="width: 18rem; max-width: 800px; margin: 0 auto;">
-      {% if producto.imagen %}
-        <img src="data:image/jpeg;base64,{{ producto.imagen }}" class="card-img-top" alt="Foto producto">
-      {% else %}
-        <p>No image available</p>
-      {% endif %}
-      <div class="card-body">
-        <h5 class="card-title"><strong>{{ producto.nombre_producto }}</strong></h5>
-        Descripción: {{ producto.descripcion }}<br>
-        Precio: {{ producto.precio_venta }}<br>
-        <!-- Categoría: {{ producto.categoria }}<br> -->
-        <!-- Agrega más detalles según la estructura de tus documentos -->
-      </div>
-      
-      <a href="/Productos_prueba/atributos/{{ producto.id }}" class="btn btn-primary">Ver</a>
+    <!-- Cartas para mostrar los productos -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for producto in productos %}
+        <div class="col">
+            <div class="card h-100">
+                {% if producto.imagen %}
+                <img src="data:image/jpeg;base64,{{ producto.imagen }}" class="card-img-top" alt="Foto producto">
+                {% else %}
+                <p>No image available</p>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title"><strong>{{ producto.nombre_producto }}</strong></h5>
+                    Descripción: {{ producto.descripcion }}<br>
+                    Precio: {{ producto.precio_venta }}<br>
+                    <!-- Puedes agregar más detalles según la estructura de tus documentos -->
+                </div>
+                <!-- Botones "Modificar" y "Ver" -->
+                <a href="/productos/modificar/{{ producto.id }}" class="btn btn-warning">Modificar</a>
+                <a href="/Productos_prueba/atributos/{{ producto.id }}" class="btn btn-primary">Ver</a>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <br>
-    {% endfor %}
-    <!-- carta para poner los productos --------------------------------------------------------->
+    <!-- Cartas para mostrar los productos -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7"></script>
 </body>
 
 </html>
